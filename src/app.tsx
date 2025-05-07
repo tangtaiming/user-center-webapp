@@ -19,21 +19,27 @@ export async function getInitialState(): Promise<{
   loading?: boolean;
   fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
 }> {
+  const IS_WHITE_LIST = ["/user/register"]
   const fetchUserInfo = async () => {
+    const cPath = history.location.pathname;
     try {
+      console.log("fetchUserInfo 44::" + JSON.stringify(history.location.pathname));
       const msg = await queryCurrentUser({
         skipErrorHandler: true,
       });
       return msg.data;
     } catch (error) {
-      // console.log("fetchUserInfo 22");
-      // history.push(loginPath);
+      console.log("fetchUserInfo 22::" + history);
+      if (!IS_WHITE_LIST.includes(cPath)) {
+        history.push(loginPath);
+      }
     }
     return undefined;
   };
   // 如果不是登录页面，执行
   const { location } = history;
   if (location.pathname !== loginPath) {
+    console.log("55555");
     const currentUser = await fetchUserInfo();
     return {
       fetchUserInfo,
