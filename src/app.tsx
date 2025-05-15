@@ -1,12 +1,14 @@
-import { AvatarDropdown, AvatarName, Footer, Question } from '@/components';
-import { currentUser as queryCurrentUser } from '@/services/ant-design-pro/api';
-import { LinkOutlined } from '@ant-design/icons';
-import type { Settings as LayoutSettings } from '@ant-design/pro-components';
-import { SettingDrawer } from '@ant-design/pro-components';
-import type { RunTimeLayoutConfig } from '@umijs/max';
-import { history, Link } from '@umijs/max';
+import {AvatarDropdown, AvatarName, Footer, Question} from '@/components';
+import {currentUser as queryCurrentUser} from '@/services/ant-design-pro/api';
+import {LinkOutlined} from '@ant-design/icons';
+import {SettingDrawer} from '@ant-design/pro-components';
+import {history} from '@umijs/max';
 import defaultSettings from '../config/defaultSettings';
-import { errorConfig } from './requestErrorConfig';
+import {errorConfig} from './requestErrorConfig';
+import { Settings as LayoutSettings } from '@ant-design/pro-components';
+import { RunTimeLayoutConfig } from '@umijs/max';
+import {Link} from "react-router-dom";
+
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
 
@@ -19,17 +21,19 @@ export async function getInitialState(): Promise<{
   loading?: boolean;
   fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
 }> {
-  const IS_WHITE_LIST = ["/user/register"]
+  const IS_WHITE_LIST = ["/user/register", loginPath]
   const fetchUserInfo = async () => {
     const cPath = history.location.pathname;
     try {
-      console.log("fetchUserInfo 44::" + JSON.stringify(history.location.pathname));
+      // console.log("fetchUserInfo 44::" + JSON.stringify(history.location.pathname));
       const msg = await queryCurrentUser({
         skipErrorHandler: true,
       });
-      return msg.data;
+      console.log("==========msg============");
+      console.log(msg);
+      return msg;
     } catch (error) {
-      console.log("fetchUserInfo 22::" + history);
+      // console.log("fetchUserInfo 22::" + history);
       if (!IS_WHITE_LIST.includes(cPath)) {
         history.push(loginPath);
       }
@@ -38,8 +42,8 @@ export async function getInitialState(): Promise<{
   };
   // 如果不是登录页面，执行
   const { location } = history;
-  if (location.pathname !== loginPath) {
-    console.log("55555");
+  if (!IS_WHITE_LIST.includes(location.pathname)) {
+    // console.log("55555");
     const currentUser = await fetchUserInfo();
     return {
       fetchUserInfo,

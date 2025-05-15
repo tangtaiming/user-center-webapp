@@ -1,6 +1,5 @@
-import { Footer } from '@/components';
-import { login } from '@/services/ant-design-pro/api';
-import { getFakeCaptcha } from '@/services/ant-design-pro/login';
+import {Footer} from '@/components';
+import {login} from '@/services/ant-design-pro/api';
 import {
   AlipayCircleOutlined,
   LockOutlined,
@@ -9,18 +8,15 @@ import {
   UserOutlined,
   WeiboCircleOutlined,
 } from '@ant-design/icons';
-import {
-  LoginForm,
-  ProFormCaptcha,
-  ProFormCheckbox,
-  ProFormText,
-} from '@ant-design/pro-components';
-import { Helmet, history, useModel } from '@umijs/max';
-import { Alert, message, Tabs } from 'antd';
-import { createStyles } from 'antd-style';
-import React, { useState } from 'react';
-import { flushSync } from 'react-dom';
+import {LoginForm, ProFormCheckbox, ProFormText,} from '@ant-design/pro-components';
+import {Helmet, history, useModel} from '@umijs/max';
+import {Alert, message, Space, Tabs} from 'antd';
+import {createStyles} from 'antd-style';
+import React, {useState} from 'react';
+import {flushSync} from 'react-dom';
 import Settings from '../../../../config/defaultSettings';
+import {SYSTEM_LINK} from "@/constants";
+
 const useStyles = createStyles(({ token }) => {
   return {
     action: {
@@ -91,6 +87,8 @@ const Login: React.FC = () => {
   const { styles } = useStyles();
   const fetchUserInfo = async () => {
     const userInfo = await initialState?.fetchUserInfo?.();
+    // console.log("user info");
+    // console.log(JSON.stringify(userInfo));
     if (userInfo) {
       flushSync(() => {
         setInitialState((s) => ({
@@ -107,15 +105,19 @@ const Login: React.FC = () => {
         ...values,
         type,
       });
+      // console.log("login user");
+      // console.log(user);
+      // @ts-ignore
       if (user !== null && user !== undefined && user !== "") {
         const defaultLoginSuccessMessage = '登录成功！';
         message.success(defaultLoginSuccessMessage);
         await fetchUserInfo();
         const urlParams = new URL(window.location.href).searchParams;
         history.push(urlParams.get('redirect') || '/');
+        // history.push("/user/login")
         return;
       }
-      console.log(user);
+
       // 如果失败去设置用户错误信息
       setUserLoginState(user);
     } catch (error) {
@@ -132,7 +134,7 @@ const Login: React.FC = () => {
           {'登录'}- {Settings.title}
         </title>
       </Helmet>
-      <Lang />
+      {/*<Lang />*/}
       <div
         style={{
           flex: '1',
@@ -146,7 +148,7 @@ const Login: React.FC = () => {
           }}
           logo={<img alt="logo" src="/logo.svg" />}
           title="用户管理中心"
-          subTitle={'用户管理中心 是湖南长沙最具影响力的一个网站'}
+          subTitle={<a href={SYSTEM_LINK} target="_blank"> 用户管理中心 是湖南长沙最具影响力的一个网站 </a>}
           initialValues={{
             autoLogin: true,
           }}
@@ -198,6 +200,11 @@ const Login: React.FC = () => {
                     required: true,
                     message: '密码是必填项！',
                   },
+                  {
+                    min: 8,
+                    type: 'string',
+                    message: '密码长度8位',
+                  }
                 ]}
               />
             </>
@@ -209,16 +216,31 @@ const Login: React.FC = () => {
               marginBottom: 24,
             }}
           >
-            <ProFormCheckbox noStyle name="autoLogin">
-              自动登录
-            </ProFormCheckbox>
-            <a
-              style={{
-                float: 'right',
-              }}
-            >
-              忘记密码 ?
-            </a>
+            <Space size="large">
+              <ProFormCheckbox noStyle name="autoLogin">
+                自动登录
+              </ProFormCheckbox>
+
+              <a
+                href="/user/register"
+                style={{
+                  float: 'right',
+                }}
+              >
+                注册用户
+              </a>
+
+              <a
+                style={{
+                  float: 'right',
+                }}
+
+                href={SYSTEM_LINK}
+                target="_blank"
+              >
+                忘记密码
+              </a>
+            </Space>
           </div>
         </LoginForm>
       </div>
