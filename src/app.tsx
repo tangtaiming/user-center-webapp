@@ -1,13 +1,12 @@
-import {AvatarDropdown, AvatarName, Footer, Question} from '@/components';
-import {currentUser as queryCurrentUser} from '@/services/ant-design-pro/api';
-import {LinkOutlined} from '@ant-design/icons';
-import {SettingDrawer} from '@ant-design/pro-components';
-import {history} from '@umijs/max';
+import { AvatarDropdown, AvatarName, Footer, Question } from '@/components';
+import { currentUser as queryCurrentUser } from '@/services/ant-design-pro/api';
+import { LinkOutlined } from '@ant-design/icons';
+import { Settings as LayoutSettings, SettingDrawer } from '@ant-design/pro-components';
+import { history, RunTimeLayoutConfig } from '@umijs/max';
+import { message } from 'antd';
+import { Link } from 'react-router-dom';
 import defaultSettings from '../config/defaultSettings';
-import {errorConfig} from './requestErrorConfig';
-import { Settings as LayoutSettings } from '@ant-design/pro-components';
-import { RunTimeLayoutConfig } from '@umijs/max';
-import {Link} from "react-router-dom";
+import { errorConfig } from './requestErrorConfig';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
@@ -17,11 +16,11 @@ const loginPath = '/user/login';
  * */
 export async function getInitialState(): Promise<{
   settings?: Partial<LayoutSettings>;
-  currentUser?: API.CurrentUser;
+  currentUser?: () => API.CurrentUser;
   loading?: boolean;
   fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
 }> {
-  const IS_WHITE_LIST = ["/user/register", loginPath]
+  const IS_WHITE_LIST = ['/user/register', loginPath];
   const fetchUserInfo = async () => {
     const cPath = history.location.pathname;
     try {
@@ -29,7 +28,7 @@ export async function getInitialState(): Promise<{
       const msg = await queryCurrentUser({
         skipErrorHandler: true,
       });
-      console.log("==========msg============");
+      console.log('==========msg============');
       console.log(msg);
       return msg;
     } catch (error) {
@@ -45,12 +44,16 @@ export async function getInitialState(): Promise<{
   if (!IS_WHITE_LIST.includes(location.pathname)) {
     // console.log("55555");
     const currentUser = await fetchUserInfo();
+
     return {
       fetchUserInfo,
       currentUser,
       settings: defaultSettings as Partial<LayoutSettings>,
     };
   }
+
+  // console.log("111111111111");
+  // console.log(currentUser)
   return {
     fetchUserInfo,
     settings: defaultSettings as Partial<LayoutSettings>,
@@ -74,8 +77,11 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     footerRender: () => <Footer />,
     onPageChange: () => {
       const { location } = history;
-      // console.log("onPageChange 11");
+      console.log('onPageChange 11');
       // 如果没有登录，重定向到 login
+      console.log(initialState?.currentUser);
+      console.log(initialState?.fetchUserInfo);
+
       if (!initialState?.currentUser && location.pathname !== loginPath) {
         history.push(loginPath);
       }
@@ -144,8 +150,39 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
  */
 export const request = {
   // 配置统一的请求地址 根据环境设置
-  baseURL:"http://127.0.0.1:8000/api",
+  baseURL: 'http://127.0.0.1:8000/api',
   //超时时间 10秒
-  setTimeout:1000,
+  setTimeout: 1000,
+  getResponse: true,
   ...errorConfig,
+  responseInterceptors: [
+    (response) => {
+      console.log('responseInterceptors');
+      console.log(response);
+      const resData = response.data;
+      if (resData.code === 0) {
+        return resData;
+      }
+
+      let { description } = resData;
+      if (null === description || undefined === description) {
+        description = resData.message;
+      }
+      message.error(description);
+      //resData.success = false;
+      response.data = null;
+      // if (resData.code === 40100) {
+      //   message.error('请先登录');
+      //   history.replace({
+      //     pathname: '/user/login',
+      //     search: stringify({
+      //       redirect: history.location.pathname,
+      //     }),
+      //   });
+      // } else {
+      //
+      // }
+      return response;
+    },
+  ],
 };

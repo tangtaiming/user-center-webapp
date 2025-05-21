@@ -1,13 +1,12 @@
-import {Footer} from '@/components';
-import {register} from '@/services/ant-design-pro/api';
-import {LockOutlined, UserOutlined} from '@ant-design/icons';
-import {LoginForm, ProFormCheckbox, ProFormText} from '@ant-design/pro-components';
-import {Helmet, history} from '@umijs/max';
-import {Alert, message, Tabs} from 'antd';
-import {createStyles} from 'antd-style';
-import React, {useState} from 'react';
+import { Footer } from '@/components';
+import { register } from '@/services/ant-design-pro/api';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { LoginForm, ProFormCheckbox, ProFormText } from '@ant-design/pro-components';
+import { Helmet, history } from '@umijs/max';
+import { Alert, message, Tabs } from 'antd';
+import { createStyles } from 'antd-style';
+import React, { useState } from 'react';
 import Settings from '../../../../config/defaultSettings';
-import Icon from "@ant-design/icons/lib/components/Icon";
 
 const useStyles = createStyles(({ token }) => {
   return {
@@ -44,9 +43,6 @@ const useStyles = createStyles(({ token }) => {
     },
   };
 });
-const Lang = () => {
-  return;
-};
 const LoginMessage: React.FC<{
   content: string;
 }> = ({ content }) => {
@@ -62,21 +58,21 @@ const LoginMessage: React.FC<{
   );
 };
 const Register: React.FC = () => {
-  const [userLoginState, setUserLoginState] = useState<API.LoginResult>({});
+  const [userLoginState] = useState<API.LoginResult>({});
   const [type, setType] = useState<string>('account');
   const { styles } = useStyles();
   const handleSubmit = async (values: API.RegisterParams) => {
     //校验
-    const {userAccount, userPassword, checkPassword} = values;
+    const { userPassword, checkPassword } = values;
     if (userPassword !== checkPassword) {
-       message.error("两次密码输入不一致!");
-       return;
+      message.error('两次密码输入不一致!');
+      return;
     }
 
     try {
       // 注册
       const registerId = await register({
-          ...values,
+        ...values,
         type,
       });
       console.log(registerId);
@@ -88,7 +84,7 @@ const Register: React.FC = () => {
         return;
       }
 
-      throw new Error("register error id = " + registerId);
+      // throw new Error("register error id = " + registerId);
     } catch (error) {
       const defaultLoginFailureMessage = '注册失败，请重试！';
       console.log(error);
@@ -120,9 +116,9 @@ const Register: React.FC = () => {
             autoLogin: true,
           }}
           submitter={{
-            searchConfig:{
-              submitText:"注册"
-            }
+            searchConfig: {
+              submitText: '注册',
+            },
           }}
           actions={[]}
           onFinish={async (values) => {
@@ -137,7 +133,7 @@ const Register: React.FC = () => {
               {
                 key: 'account',
                 label: '账户密码注册',
-              }
+              },
             ]}
           />
 
@@ -176,7 +172,7 @@ const Register: React.FC = () => {
                     min: 8,
                     type: 'string',
                     message: '密码长度8位',
-                  }
+                  },
                 ]}
               />
               <ProFormText.Password
@@ -195,7 +191,21 @@ const Register: React.FC = () => {
                     min: 8,
                     type: 'string',
                     message: '密码长度8位',
-                  }
+                  },
+                ]}
+              />
+              <ProFormText
+                name="inviteCode"
+                fieldProps={{
+                  size: 'large',
+                  prefix: <UserOutlined />,
+                }}
+                placeholder={'请输入邀请码'}
+                rules={[
+                  {
+                    required: true,
+                    message: '邀请码是必填项！',
+                  },
                 ]}
               />
             </>

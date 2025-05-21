@@ -1,9 +1,9 @@
-import {EllipsisOutlined, PlusOutlined} from '@ant-design/icons';
-import {ProTable, TableDropdown} from '@ant-design/pro-components';
-import {Button, Dropdown, Space, Tag} from 'antd';
-import {useRef} from 'react';
-import request from 'umi-request';
+import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
+import { ProTable, TableDropdown } from '@ant-design/pro-components';
+import { Button } from 'antd';
+import { useRef } from 'react';
+import request from 'umi-request';
 
 export const waitTimePromise = async (time: number = 100) => {
   return new Promise((resolve) => {
@@ -61,7 +61,7 @@ const columns: ProColumns<API.CurrentUser>[] = [
       },
       1: {
         text: '女',
-      }
+      },
     },
   },
   {

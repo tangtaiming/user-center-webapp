@@ -3,33 +3,33 @@
 
 declare namespace API {
   type CurrentUser = {
-    id?: number,
-    userAccount?: string,
-    userName?: string,
-    avatar?: string,
-    gender?: number,
-    phone?: string,
-    email?: string,
-    userStatus?: number,
-    isDelete?: number,
+    id?: number;
+    userAccount?: string;
+    userName?: string;
+    avatar?: string;
+    gender?: number;
+    phone?: string;
+    email?: string;
+    userStatus?: number;
+    isDelete?: number;
     userRole?: number;
   };
 
   type LoginResult = {
-    id?: number,
-    userAccount?: string,
-    userName?: string,
-    avatar?: string,
-    gender?: number,
-    phone?: string,
-    email?: string,
-    userStatus?: number,
-    isDelete?: number,
-    userRole?: number
+    id?: number;
+    userAccount?: string;
+    userName?: string;
+    avatar?: string;
+    gender?: number;
+    phone?: string;
+    email?: string;
+    userStatus?: number;
+    isDelete?: number;
+    userRole?: number;
   };
 
   type RegisterResult = {
-    id?: string
+    id?: string;
   };
 
   type PageParams = {
@@ -64,6 +64,13 @@ declare namespace API {
     status?: string;
   };
 
+  type ResponseBase<T> = {
+    code?: number;
+    message?: string;
+    description?: string;
+    data?: T;
+  };
+
   type LoginParams = {
     userAccount?: string;
     userPassword?: string;
@@ -76,6 +83,7 @@ declare namespace API {
     userAccount?: string;
     userPassword?: string;
     checkPassword?: string;
+    inviteCode?: string;
     type?: string;
   };
 
