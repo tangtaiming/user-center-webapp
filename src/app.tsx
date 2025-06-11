@@ -20,6 +20,8 @@ export async function getInitialState(): Promise<{
   loading?: boolean;
   fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
 }> {
+  // alert(process.env.NODE_ENV);
+  console.log(process.env.NODE_ENV);
   const IS_WHITE_LIST = ['/user/register', loginPath];
   const fetchUserInfo = async () => {
     const cPath = history.location.pathname;
@@ -77,10 +79,10 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     footerRender: () => <Footer />,
     onPageChange: () => {
       const { location } = history;
-      console.log('onPageChange 11');
+      // console.log('/onPageChange 11');
       // 如果没有登录，重定向到 login
-      console.log(initialState?.currentUser);
-      console.log(initialState?.fetchUserInfo);
+      // console.log(initialState?.currentUser);
+      // console.log(initialState?.fetchUserInfo);
 
       if (!initialState?.currentUser && location.pathname !== loginPath) {
         history.push(loginPath);
@@ -150,7 +152,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
  */
 export const request = {
   // 配置统一的请求地址 根据环境设置
-  baseURL: 'http://127.0.0.1:8000/api',
+  baseURL: 'http://120.76.136.67/api',
   //超时时间 10秒
   setTimeout: 1000,
   getResponse: true,
@@ -160,12 +162,13 @@ export const request = {
       console.log('responseInterceptors');
       console.log(response);
       const resData = response.data;
+      console.log(resData);
       if (resData.code === 0) {
         return resData;
       }
 
       let { description } = resData;
-      if (null === description || undefined === description) {
+      if (null === description || undefined === description || '' === description) {
         description = resData.message;
       }
       message.error(description);

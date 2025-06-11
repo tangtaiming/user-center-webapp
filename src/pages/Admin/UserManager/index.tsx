@@ -125,7 +125,7 @@ export default () => {
         await waitTime(2000);
         return request<{
           data: API.CurrentUser[];
-        }>('http://127.0.0.1:8000/api/user/list', {
+        }>('/api/user/list', {
           params,
           method: 'POST',
         });
