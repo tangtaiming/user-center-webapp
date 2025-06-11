@@ -22,6 +22,7 @@ export async function getInitialState(): Promise<{
 }> {
   // alert(process.env.NODE_ENV);
   console.log(process.env.NODE_ENV);
+  console.log(isDev);
   const IS_WHITE_LIST = ['/user/register', loginPath];
   const fetchUserInfo = async () => {
     const cPath = history.location.pathname;
@@ -152,7 +153,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
  */
 export const request = {
   // 配置统一的请求地址 根据环境设置
-  baseURL: 'http://120.76.136.67/api',
+  baseURL: isDev ? 'http://127.0.0.1:8000/api' : 'http://120.76.136.67/api',
   //超时时间 10秒
   setTimeout: 1000,
   getResponse: true,
